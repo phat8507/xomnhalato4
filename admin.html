@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản trị Memory Lane</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="overlay" id="loginOverlay">
+    <div class="login-card" id="loginCard">
+      <h2>Trang quản trị</h2>
+      <p>Nhập mật khẩu để mở bảng điều khiển và cập nhật website kỷ niệm.</p>
+      <form id="loginForm">
+        <div class="field">
+          <label for="passwordInput">Mật khẩu</label>
+          <input id="passwordInput" type="password" placeholder="Nhập mật khẩu" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" type="submit">Mở trang quản trị</button>
+        <div class="error-text" id="loginError" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="shell" id="adminShell">
+    <header class="hero">
+      <div>
+        <h1>Bảng điều khiển kỷ niệm</h1>
+        <p>Điền nội dung, kéo thả ảnh hoặc video, rồi bấm lưu để website công khai cập nhật ngay trên GitHub Pages.</p>
+      </div>
+      <div class="hero-badge">Ngôn ngữ: Tiếng Việt</div>
+    </header>
+
+    <section class="card">
+      <h2 class="section-title">Cài đặt website</h2>
+      <p class="section-desc">Thông tin này sẽ hiện ở phần đầu trang chính.</p>
+      <div class="settings-grid">
+        <div class="field">
+          <label for="siteTitle">Tên website</label>
+          <input id="siteTitle" type="text" value="Những Năm Tháng Cấp 3">
+        </div>
+        <div class="field">
+          <label for="schoolName">Tên trường</label>
+          <input id="schoolName" type="text" placeholder="Ví dụ: THPT Nguyễn Du">
+        </div>
+        <div class="field">
+          <label for="schoolYears">Năm học</label>
+          <input id="schoolYears" type="text" placeholder="Ví dụ: 2019 – 2022">
+        </div>
+      </div>
+      <div class="section-action">
+        <button class="btn btn-primary" id="saveSettingsBtn" type="button">Lưu cài đặt</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Quản lý kỷ niệm</h2>
+      <p class="section-desc">Mỗi kỷ niệm là một cụm ảnh hoặc video. Bạn có thể thêm tối đa 6 ô media cho mỗi mục.</p>
+      <div class="memory-list" id="memoryList"></div>
+    </section>
+  </div>
+
+  <div class="sticky-bar" id="stickyBar">
+    <div class="sticky-copy">
+      <strong>Lưu và cập nhật website</strong>
+      <span>Dữ liệu sẽ được lưu trong trình duyệt bằng localStorage.</span>
+    </div>
+    <div class="sticky-actions">
+      <button class="btn btn-primary" id="saveAllBtn" type="button">💾 Lưu &amp; Cập nhật Website</button>
+      <button class="btn btn-secondary" id="previewSiteBtn" type="button">👁 Xem Website</button>
+      <button class="btn btn-secondary" id="exportGuideBtn" type="button">📦 Xuất file ảnh/video</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalOverlay">
+    <div class="modal-card">
+      <h2>Hướng dẫn xuất file ảnh/video</h2>
+      <ol class="guide-list">
+        <li>Tải file ảnh/video xuống máy.</li>
+        <li>Upload vào thư mục <strong>/photos/</strong> hoặc <strong>/videos/</strong> trên GitHub.</li>
+        <li>Bấm <strong>Commit changes</strong>.</li>
+        <li>Website tự cập nhật sau 1-2 phút.</li>
+      </ol>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="closeModalBtn" type="button">Đã hiểu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">✅ Đã lưu! Website đã được cập nhật.</div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

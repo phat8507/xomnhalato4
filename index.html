@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Những Năm Tháng Cấp 3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand" id="brandTitle">Những Năm Tháng Cấp 3</div>
+      <button class="share-btn" id="shareButton" type="button">Share</button>
+    </header>
+
+    <main class="hero">
+      <section class="memory-stage" id="memoryStage" aria-live="polite"></section>
+
+      <aside class="story-panel">
+        <div class="story-kicker" id="storyKicker">Memory Lane</div>
+        <h1 class="story-title" id="storyTitle">Những Năm Tháng Cấp 3</h1>
+        <div class="story-meta">
+          <span id="schoolName">Trường của chúng ta</span>
+          <span id="schoolYears">2019 - 2022</span>
+        </div>
+        <p class="story-description" id="storyDescription">
+          Chạm vào từng khung phim phía dưới để mở lại những khoảnh khắc đáng nhớ của một thời áo trắng.
+        </p>
+        <div class="memory-count">
+          <strong id="memoryNumber">01</strong>
+          <span id="memoryTitleMeta">Kỷ niệm đầu tiên</span>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="filmstrip-wrap">
+    <nav class="filmstrip" id="filmstrip" aria-label="Điều hướng kỷ niệm"></nav>
+  </div>
+
+  <div class="toast" id="toast">Đã sao chép liên kết</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

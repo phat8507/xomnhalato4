@@ -12,10 +12,10 @@ const siteData = {
   siteTitle: "Nhung Nam Thang Cap 3",
 
   // Ten truong se hien o cum thong tin ben phai
-  schoolName: "THPT Nguyen Du",
+  schoolName: "THPT Thu Duc",
 
   // Nien khoa hoac nam hoc
-  years: "2021 - 2024",
+  years: "2022 - 2025",
 
   // Danh sach ky niem
   memories: [

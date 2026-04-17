@@ -15,6 +15,15 @@ const mobileLayouts = [
   { x: "44%", y: "78%", rotation: "-4deg" }
 ];
 
+const phoneLayouts = [
+  { x: "4%", y: "2%", rotation: "-5deg" },
+  { x: "50%", y: "8%", rotation: "5deg" },
+  { x: "6%", y: "28%", rotation: "4deg" },
+  { x: "50%", y: "42%", rotation: "-6deg" },
+  { x: "4%", y: "60%", rotation: "5deg" },
+  { x: "50%", y: "74%", rotation: "-4deg" }
+];
+
 const desktopLayouts = [
   { x: "3%", y: "6%", rotation: "-7deg" },
   { x: "34%", y: "2%", rotation: "6deg" },
@@ -133,10 +142,11 @@ function createCardMarkup(card, memoryIndex, cardIndex, layout) {
 }
 
 function buildScenes() {
-  const layouts = window.innerWidth <= 780 ? mobileLayouts : desktopLayouts;
+  const viewportWidth = window.innerWidth;
+  const layouts = viewportWidth <= 560 ? phoneLayouts : viewportWidth <= 780 ? mobileLayouts : desktopLayouts;
 
   elements.memoryStage.innerHTML = state.data.memories.map((memory, memoryIndex) => `
-    <section class="memory-scene ${memoryIndex === state.activeIndex ? "active" : ""}" data-memory-index="${memoryIndex}">
+    <section class="memory-scene ${memoryIndex === state.activeIndex ? "active" : ""}" data-memory-index="${memoryIndex}" style="${viewportWidth <= 560 ? `--scene-height:${Math.max(760, 240 + memory.cards.slice(0, 6).length * 148)}px` : ""}">
       ${memory.cards.slice(0, 6).map((card, cardIndex) => createCardMarkup(card, memoryIndex, cardIndex, layouts[cardIndex % layouts.length])).join("")}
     </section>
   `).join("");

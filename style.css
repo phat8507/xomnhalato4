@@ -354,81 +354,110 @@ body::after {
 
 .filmstrip-wrap {
   position: fixed;
-  left: 24px;
-  right: 24px;
-  bottom: 18px;
+  left: 20px;
+  right: 20px;
+  bottom: 22px;
   z-index: 5;
   display: flex;
   justify-content: center;
   pointer-events: none;
 }
 
-.filmstrip {
-  width: min(100%, 1180px);
-  padding: 14px;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
-  border-radius: 30px;
-  background: linear-gradient(180deg, rgba(46, 38, 32, 0.95), rgba(24, 21, 18, 0.96));
-  box-shadow: 0 24px 55px rgba(31, 24, 20, 0.32);
+.memory-slider {
+  width: min(100%, 860px);
+  padding: 18px 22px 20px;
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.92), rgba(248, 241, 232, 0.86));
+  box-shadow: 0 24px 55px rgba(31, 24, 20, 0.12);
+  backdrop-filter: blur(18px);
   pointer-events: auto;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
+.memory-slider-head {
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.memory-slider-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: rgba(46, 36, 29, 0.92);
+}
+
+.memory-slider-subtitle {
+  margin-top: 6px;
+  color: rgba(96, 84, 72, 0.74);
+  font-size: 0.88rem;
+}
+
+.filmstrip {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 8px 4px 4px;
+  scrollbar-width: none;
+}
+
+.filmstrip::-webkit-scrollbar {
+  display: none;
 }
 
 .filmstrip-btn {
   border: none;
   padding: 0;
   display: grid;
-  gap: 10px;
+  gap: 8px;
   background: transparent;
   color: inherit;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
-  opacity: 0.8;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.54;
+  flex: 0 0 auto;
+  transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
 }
 
 .filmstrip-btn:hover,
 .filmstrip-btn[aria-current="true"] {
   transform: translateY(-4px);
   opacity: 1;
+  filter: saturate(1.04);
+}
+
+.filmstrip-btn[aria-current="true"] .film-frame {
+  width: 88px;
+  height: 64px;
+  box-shadow: 0 16px 28px rgba(52, 40, 32, 0.2);
+}
+
+.filmstrip-btn[aria-current="true"] .film-label {
+  opacity: 1;
 }
 
 .film-frame {
   position: relative;
-  height: 84px;
+  width: 54px;
+  height: 54px;
   overflow: hidden;
-  border-radius: 14px;
-  outline: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 10%, transparent 10% 90%, rgba(255, 255, 255, 0.08) 90%),
-    rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  outline: 1px solid rgba(87, 73, 62, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  transition: width 0.25s ease, height 0.25s ease, box-shadow 0.25s ease, border-radius 0.25s ease;
 }
 
 .film-frame::before,
 .film-frame::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 14px;
-  opacity: 0.7;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.58) 32%, transparent 36%) center / 12px 18px repeat-y;
-}
-
-.film-frame::before {
-  left: 0;
-}
-
-.film-frame::after {
-  right: 0;
+  content: none;
 }
 
 .film-thumb {
   position: absolute;
-  inset: 8px 18px;
+  inset: 0;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: inherit;
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -441,17 +470,19 @@ body::after {
 }
 
 .film-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 0 2px;
-  color: rgba(248, 241, 233, 0.96);
-  font-size: 0.84rem;
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  min-height: 34px;
+  color: rgba(54, 43, 35, 0.9);
+  font-size: 0.78rem;
   font-weight: 600;
+  opacity: 0.78;
+  transition: opacity 0.25s ease;
 }
 
 .film-label span:last-child {
-  color: rgba(248, 241, 233, 0.56);
+  color: rgba(110, 100, 90, 0.62);
 }
 
 .toast {
@@ -531,7 +562,7 @@ body::after {
   }
 
   .filmstrip {
-    grid-template-columns: 1fr;
+    justify-content: flex-start;
   }
 
   .filmstrip-wrap {
@@ -539,12 +570,18 @@ body::after {
     right: 12px;
   }
 
-  .filmstrip-btn {
-    grid-template-columns: 112px 1fr;
-    align-items: center;
+  .memory-slider {
+    width: 100%;
+    padding: 16px 16px 18px;
   }
 
-  .film-label {
-    align-items: center;
+  .memory-slider-head {
+    text-align: left;
+    padding-left: 4px;
+  }
+
+  .filmstrip-btn[aria-current="true"] .film-frame {
+    width: 80px;
+    height: 60px;
   }
 }

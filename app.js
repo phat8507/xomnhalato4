@@ -85,7 +85,21 @@ const elements = {
   shareButton: document.getElementById("shareButton")
 };
 
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function prefersReducedMotion() {
+  return reducedMotionQuery.matches;
+}
+
+function syncMotionPreference() {
+  document.documentElement.classList.toggle("reduced-motion", prefersReducedMotion());
+}
+
 function restartAnimations(nodes) {
+  if (prefersReducedMotion()) {
+    return;
+  }
+
   nodes.filter(Boolean).forEach(node => {
     node.style.animation = "none";
     void node.offsetWidth;
@@ -216,7 +230,7 @@ function focusActiveThumbnail() {
   }
 
   activeButton.scrollIntoView({
-    behavior: "smooth",
+    behavior: prefersReducedMotion() ? "auto" : "smooth",
     inline: "center",
     block: "nearest"
   });
@@ -234,6 +248,11 @@ function goToRelativeMemory(direction) {
 }
 
 function setActiveMemory(index) {
+  if (index === state.activeIndex) {
+    focusActiveThumbnail();
+    return;
+  }
+
   const total = state.data.memories.length;
   const direction = index === state.activeIndex
     ? 0
@@ -382,3 +401,10 @@ elements.shareButton.addEventListener("click", async () => {
 
 render();
 focusActiveThumbnail();
+syncMotionPreference();
+
+if (typeof reducedMotionQuery.addEventListener === "function") {
+  reducedMotionQuery.addEventListener("change", syncMotionPreference);
+} else if (typeof reducedMotionQuery.addListener === "function") {
+  reducedMotionQuery.addListener(syncMotionPreference);
+}

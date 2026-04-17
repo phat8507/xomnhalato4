@@ -1,6 +1,6 @@
 # Memory Lane - Website kỷ niệm cho GitHub Pages
 
-Đây là bộ website tĩnh gồm:
+Đây là bộ website tĩnh gồm
 
 - `index.html`: trang chính để xem kỷ niệm
 - `admin.html`: trang quản trị để nhập nội dung, ảnh và video

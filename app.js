@@ -67,6 +67,8 @@ const elements = {
   memoryTitleMeta: document.getElementById("memoryTitleMeta"),
   memoryStage: document.getElementById("memoryStage"),
   filmstrip: document.getElementById("filmstrip"),
+  sliderTitle: document.getElementById("sliderTitle"),
+  sliderSubtitle: document.getElementById("sliderSubtitle"),
   toast: document.getElementById("toast"),
   shareButton: document.getElementById("shareButton")
 };
@@ -168,12 +170,38 @@ function renderStoryPanel() {
   document.title = state.data.siteTitle;
   elements.brandTitle.textContent = state.data.siteTitle;
   elements.storyKicker.textContent = active.title;
+  elements.sliderTitle.textContent = active.title;
+  elements.sliderSubtitle.textContent = `${String(state.activeIndex + 1).padStart(2, "0")} / ${String(state.data.memories.length).padStart(2, "0")} • Lướt để chuyển kỷ niệm`;
   elements.storyTitle.textContent = state.data.siteTitle;
   elements.schoolName.textContent = state.data.schoolName;
   elements.schoolYears.textContent = state.data.years;
   elements.storyDescription.textContent = active.description;
   elements.memoryNumber.textContent = String(state.activeIndex + 1).padStart(2, "0");
   elements.memoryTitleMeta.textContent = active.title;
+}
+
+function focusActiveThumbnail() {
+  const activeButton = elements.filmstrip.querySelector(`.filmstrip-btn[data-index="${state.activeIndex}"]`);
+  if (!activeButton) {
+    return;
+  }
+
+  activeButton.scrollIntoView({
+    behavior: "smooth",
+    inline: "center",
+    block: "nearest"
+  });
+}
+
+function goToRelativeMemory(direction) {
+  const total = state.data.memories.length;
+  if (!total) {
+    return;
+  }
+
+  const nextIndex = (state.activeIndex + direction + total) % total;
+  setActiveMemory(nextIndex);
+  focusActiveThumbnail();
 }
 
 function setActiveMemory(index) {
@@ -215,6 +243,8 @@ function renderEmptyState() {
   `;
 
   elements.storyKicker.textContent = "Bắt đầu";
+  elements.sliderTitle.textContent = "Mở data.js";
+  elements.sliderSubtitle.textContent = "Thêm dữ liệu để bắt đầu";
   elements.storyTitle.textContent = state.data.siteTitle;
   elements.schoolName.textContent = state.data.schoolName;
   elements.schoolYears.textContent = state.data.years;
@@ -239,6 +269,16 @@ window.addEventListener("resize", () => {
   window.__memoryResizeTimer = setTimeout(() => render(), 120);
 });
 
+window.addEventListener("keydown", event => {
+  if (event.key === "ArrowRight") {
+    goToRelativeMemory(1);
+  }
+
+  if (event.key === "ArrowLeft") {
+    goToRelativeMemory(-1);
+  }
+});
+
 elements.filmstrip.addEventListener("click", event => {
   const button = event.target.closest(".filmstrip-btn");
   if (!button || button.dataset.index === undefined) {
@@ -246,8 +286,41 @@ elements.filmstrip.addEventListener("click", event => {
   }
 
   setActiveMemory(Number(button.dataset.index));
-  elements.memoryStage.scrollIntoView({ behavior: "smooth", block: "center" });
+  focusActiveThumbnail();
 });
+
+elements.memoryStage.addEventListener("wheel", event => {
+  if (Math.abs(event.deltaY) < 12 && Math.abs(event.deltaX) < 12) {
+    return;
+  }
+
+  event.preventDefault();
+  clearTimeout(elements.memoryStage.__wheelTimer);
+  elements.memoryStage.__wheelTimer = setTimeout(() => {
+    goToRelativeMemory(event.deltaY > 0 || event.deltaX > 0 ? 1 : -1);
+  }, 40);
+}, { passive: false });
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+elements.memoryStage.addEventListener("touchstart", event => {
+  const touch = event.changedTouches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+}, { passive: true });
+
+elements.memoryStage.addEventListener("touchend", event => {
+  const touch = event.changedTouches[0];
+  const deltaX = touch.clientX - touchStartX;
+  const deltaY = touch.clientY - touchStartY;
+
+  if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) {
+    return;
+  }
+
+  goToRelativeMemory(deltaX < 0 ? 1 : -1);
+}, { passive: true });
 
 elements.shareButton.addEventListener("click", async () => {
   const shareUrl = window.location.href;
@@ -270,3 +343,4 @@ elements.shareButton.addEventListener("click", async () => {
 });
 
 render();
+focusActiveThumbnail();

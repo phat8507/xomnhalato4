@@ -171,7 +171,7 @@ function renderStoryPanel() {
   elements.brandTitle.textContent = state.data.siteTitle;
   elements.storyKicker.textContent = active.title;
   elements.sliderTitle.textContent = active.title;
-  elements.sliderSubtitle.textContent = `${String(state.activeIndex + 1).padStart(2, "0")} / ${String(state.data.memories.length).padStart(2, "0")} • Lướt để chuyển kỷ niệm`;
+  elements.sliderSubtitle.textContent = "Lướt để chuyển kỷ niệm";
   elements.storyTitle.textContent = state.data.siteTitle;
   elements.schoolName.textContent = state.data.schoolName;
   elements.schoolYears.textContent = state.data.years;

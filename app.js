@@ -1,5 +1,3 @@
-const STORAGE_KEY = "memoryLaneData";
-
 const placeholderGradients = [
   "linear-gradient(135deg, #d9efea 0%, #c8dfd7 100%)",
   "linear-gradient(135deg, #f7dccd 0%, #f3c7af 100%)",
@@ -26,64 +24,36 @@ const desktopLayouts = [
   { x: "60%", y: "12%", rotation: "-3deg" }
 ];
 
-function createDefaultMemories() {
-  return Array.from({ length: 5 }, (_, index) => ({
-    id: index + 1,
-    title: `Kỷ niệm ${index + 1}`,
-    description: "Viết một vài dòng ngắn về khoảnh khắc này trong trang admin để làm sống lại ký ức.",
-    cards: Array.from({ length: 3 }, (__, cardIndex) => ({
-      type: cardIndex === 1 ? "video" : "photo",
-      src: "",
-      caption: cardIndex === 0 ? "Khoảnh khắc này..." : cardIndex === 1 ? "Bật lại thước phim" : "Lưu trong tim"
-    }))
-  }));
-}
-
-function defaultData() {
-  return {
+function normalizeSiteData() {
+  const fallback = {
     siteTitle: "Những Năm Tháng Cấp 3",
-    schoolName: "",
-    years: "",
-    memories: createDefaultMemories()
+    schoolName: "Tên trường",
+    years: "2021 - 2024",
+    memories: []
   };
-}
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return defaultData();
-    }
-
-    const parsed = JSON.parse(raw);
-    const fallback = defaultData();
-
-    return {
-      ...fallback,
-      ...parsed,
-      memories: Array.isArray(parsed.memories) && parsed.memories.length
-        ? parsed.memories.map((memory, index) => ({
-            ...fallback.memories[index % fallback.memories.length],
-            ...memory,
-            cards: Array.isArray(memory.cards) && memory.cards.length
-              ? memory.cards.map(card => ({
-                  type: card.type === "video" ? "video" : "photo",
-                  src: card.src || "",
-                  caption: card.caption || ""
-                }))
-              : fallback.memories[index % fallback.memories.length].cards
-          }))
-        : fallback.memories
-    };
-  } catch (error) {
-    console.error("Không thể tải dữ liệu:", error);
-    return defaultData();
+  if (typeof siteData !== "object" || !siteData) {
+    return fallback;
   }
+
+  return {
+    ...fallback,
+    ...siteData,
+    memories: Array.isArray(siteData.memories) ? siteData.memories.map((memory, index) => ({
+      title: memory.title || `Kỷ niệm ${index + 1}`,
+      description: memory.description || "Thêm mô tả trong data.js để kể lại khoảnh khắc này.",
+      cards: Array.isArray(memory.cards) ? memory.cards.slice(0, 6).map(card => ({
+        type: card.type === "video" ? "video" : "photo",
+        src: card.src || "",
+        caption: card.caption || ""
+      })) : []
+    })) : []
+  };
 }
 
 const state = {
   activeIndex: 0,
-  data: loadData()
+  data: normalizeSiteData()
 };
 
 const elements = {
@@ -119,27 +89,36 @@ function createPlaceholder(type, gradient) {
         <path d="M17 12.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
       <strong>${type === "video" ? "Thêm video" : "Thêm ảnh"}</strong>
-      <span>${type === "video" ? "MP4" : "JPG, PNG, WEBP"}</span>
+      <span>${type === "video" ? "videos/ten-video.mp4" : "photos/ten-anh.jpg"}</span>
     </div>
   `;
+}
+
+function createMediaMarkup(card, gradient, caption) {
+  if (!card.src) {
+    return createPlaceholder(card.type, gradient);
+  }
+
+  if (card.type === "video") {
+    return `
+      <video src="${card.src}" muted loop playsinline autoplay preload="metadata"></video>
+      <div class="video-badge">▶</div>
+    `;
+  }
+
+  return `<img src="${card.src}" alt="${caption}">`;
 }
 
 function createCardMarkup(card, memoryIndex, cardIndex, layout) {
   const gradient = placeholderGradients[memoryIndex % placeholderGradients.length];
   const delay = `${cardIndex * 0.08}s`;
   const caption = card.caption || (card.type === "video" ? "Một thước phim nhỏ" : "Một điều thật đẹp");
-  const mediaMarkup = card.src
-    ? card.type === "video"
-      ? `
-        <video src="${card.src}" muted loop playsinline autoplay></video>
-        <div class="video-badge">▶</div>
-      `
-      : `<img src="${card.src}" alt="${caption}">`
-    : createPlaceholder(card.type, gradient);
 
   return `
     <article class="memory-card" style="--rotation:${layout.rotation};--x:${layout.x};--y:${layout.y};--delay:${delay}">
-      <div class="card-media">${mediaMarkup}</div>
+      <div class="card-media">
+        ${createMediaMarkup(card, gradient, caption)}
+      </div>
     </article>
     <div class="caption-group" style="--rotation:${layout.rotation};--x:${layout.x};--y:${layout.y};--delay:${delay}">
       <div class="caption-text">${caption}</div>
@@ -153,18 +132,12 @@ function createCardMarkup(card, memoryIndex, cardIndex, layout) {
 
 function buildScenes() {
   const layouts = window.innerWidth <= 780 ? mobileLayouts : desktopLayouts;
-  elements.memoryStage.innerHTML = state.data.memories.map((memory, memoryIndex) => {
-    const cards = memory.cards.slice(0, 6).map((card, cardIndex) => {
-      const layout = layouts[cardIndex % layouts.length];
-      return createCardMarkup(card, memoryIndex, cardIndex, layout);
-    }).join("");
 
-    return `
-      <section class="memory-scene ${memoryIndex === state.activeIndex ? "active" : ""}" data-memory-index="${memoryIndex}">
-        ${cards}
-      </section>
-    `;
-  }).join("");
+  elements.memoryStage.innerHTML = state.data.memories.map((memory, memoryIndex) => `
+    <section class="memory-scene ${memoryIndex === state.activeIndex ? "active" : ""}" data-memory-index="${memoryIndex}">
+      ${memory.cards.slice(0, 6).map((card, cardIndex) => createCardMarkup(card, memoryIndex, cardIndex, layouts[cardIndex % layouts.length])).join("")}
+    </section>
+  `).join("");
 }
 
 function renderFilmstrip() {
@@ -172,9 +145,9 @@ function renderFilmstrip() {
     const cover = memory.cards.find(card => card.src) || memory.cards[0] || { type: "photo", src: "" };
     const thumb = cover.src
       ? cover.type === "video"
-        ? `<video src="${cover.src}" muted loop playsinline autoplay></video>`
-        : `<img src="${cover.src}" alt="${memory.title || `Kỷ niệm ${index + 1}`}">`
-      : `<div class="placeholder" style="--placeholder-gradient:${placeholderGradients[index % placeholderGradients.length]};border-width:1.5px"><strong style="font-size:.9rem">${cover.type === "video" ? "Thêm video" : "Thêm ảnh"}</strong></div>`;
+        ? `<video src="${cover.src}" muted loop playsinline autoplay preload="metadata"></video>`
+        : `<img src="${cover.src}" alt="${memory.title}">`
+      : `<div class="placeholder film-placeholder" style="--placeholder-gradient:${placeholderGradients[index % placeholderGradients.length]}"><strong>${cover.type === "video" ? "Thêm video" : "Thêm ảnh"}</strong></div>`;
 
     return `
       <button class="filmstrip-btn" type="button" data-index="${index}" aria-current="${index === state.activeIndex}">
@@ -182,7 +155,7 @@ function renderFilmstrip() {
           <div class="film-thumb">${thumb}</div>
         </div>
         <div class="film-label">
-          <span>${memory.title || `Kỷ niệm ${index + 1}`}</span>
+          <span>${memory.title}</span>
           <span>${String(index + 1).padStart(2, "0")}</span>
         </div>
       </button>
@@ -192,41 +165,74 @@ function renderFilmstrip() {
 
 function renderStoryPanel() {
   const active = state.data.memories[state.activeIndex];
-  document.title = state.data.siteTitle || "Những Năm Tháng Cấp 3";
-  elements.brandTitle.textContent = state.data.siteTitle || "Những Năm Tháng Cấp 3";
-  elements.storyKicker.textContent = active.title || `Kỷ niệm ${state.activeIndex + 1}`;
-  elements.storyTitle.textContent = state.data.siteTitle || "Những Năm Tháng Cấp 3";
-  elements.schoolName.textContent = state.data.schoolName || "Tên trường sẽ hiện ở đây";
-  elements.schoolYears.textContent = state.data.years || "Năm học sẽ hiện ở đây";
-  elements.storyDescription.textContent = active.description || "Viết mô tả trong trang admin để kể thêm về khoảnh khắc này.";
+  document.title = state.data.siteTitle;
+  elements.brandTitle.textContent = state.data.siteTitle;
+  elements.storyKicker.textContent = active.title;
+  elements.storyTitle.textContent = state.data.siteTitle;
+  elements.schoolName.textContent = state.data.schoolName;
+  elements.schoolYears.textContent = state.data.years;
+  elements.storyDescription.textContent = active.description;
   elements.memoryNumber.textContent = String(state.activeIndex + 1).padStart(2, "0");
-  elements.memoryTitleMeta.textContent = active.title || `Kỷ niệm ${state.activeIndex + 1}`;
-}
-
-function render() {
-  buildScenes();
-  renderFilmstrip();
-  renderStoryPanel();
+  elements.memoryTitleMeta.textContent = active.title;
 }
 
 function setActiveMemory(index) {
   state.activeIndex = index;
+
   document.querySelectorAll(".memory-scene").forEach((scene, sceneIndex) => {
     scene.classList.toggle("active", sceneIndex === index);
   });
+
   document.querySelectorAll(".filmstrip-btn").forEach((button, buttonIndex) => {
     button.setAttribute("aria-current", buttonIndex === index ? "true" : "false");
   });
+
   renderStoryPanel();
 }
 
-window.addEventListener("storage", event => {
-  if (event.key === STORAGE_KEY) {
-    state.data = loadData();
-    state.activeIndex = Math.min(state.activeIndex, state.data.memories.length - 1);
-    render();
+function renderEmptyState() {
+  elements.memoryStage.innerHTML = `
+    <section class="memory-scene active">
+      ${createCardMarkup({ type: "photo", src: "", caption: "Thêm nội dung trong data.js" }, 0, 0, desktopLayouts[0])}
+      ${createCardMarkup({ type: "video", src: "", caption: "Đặt file vào videos/" }, 1, 1, desktopLayouts[3])}
+    </section>
+  `;
+
+  elements.filmstrip.innerHTML = `
+    <button class="filmstrip-btn" type="button" aria-current="true">
+      <div class="film-frame">
+        <div class="film-thumb">
+          <div class="placeholder film-placeholder" style="--placeholder-gradient:${placeholderGradients[0]}">
+            <strong>Mở data.js</strong>
+          </div>
+        </div>
+      </div>
+      <div class="film-label">
+        <span>Chưa có dữ liệu</span>
+        <span>00</span>
+      </div>
+    </button>
+  `;
+
+  elements.storyKicker.textContent = "Bắt đầu";
+  elements.storyTitle.textContent = state.data.siteTitle;
+  elements.schoolName.textContent = state.data.schoolName;
+  elements.schoolYears.textContent = state.data.years;
+  elements.storyDescription.textContent = "Hãy mở file data.js để thêm kỷ niệm, tiêu đề, đường dẫn ảnh và video.";
+  elements.memoryNumber.textContent = "00";
+  elements.memoryTitleMeta.textContent = "Chưa có kỷ niệm";
+}
+
+function render() {
+  if (!state.data.memories.length) {
+    renderEmptyState();
+    return;
   }
-});
+
+  buildScenes();
+  renderFilmstrip();
+  renderStoryPanel();
+}
 
 window.addEventListener("resize", () => {
   clearTimeout(window.__memoryResizeTimer);
@@ -235,11 +241,12 @@ window.addEventListener("resize", () => {
 
 elements.filmstrip.addEventListener("click", event => {
   const button = event.target.closest(".filmstrip-btn");
-  if (!button) {
+  if (!button || button.dataset.index === undefined) {
     return;
   }
+
   setActiveMemory(Number(button.dataset.index));
-  document.getElementById("memoryStage").scrollIntoView({ behavior: "smooth", block: "center" });
+  elements.memoryStage.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
 elements.shareButton.addEventListener("click", async () => {
@@ -248,7 +255,7 @@ elements.shareButton.addEventListener("click", async () => {
   try {
     if (navigator.share) {
       await navigator.share({
-        title: state.data.siteTitle || "Memory Lane",
+        title: state.data.siteTitle,
         text: "Xem lại những kỷ niệm của tụi mình nhé.",
         url: shareUrl
       });

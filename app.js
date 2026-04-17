@@ -62,6 +62,7 @@ function normalizeSiteData() {
 
 const state = {
   activeIndex: 0,
+  previousIndex: 0,
   data: normalizeSiteData()
 };
 
@@ -78,9 +79,19 @@ const elements = {
   filmstrip: document.getElementById("filmstrip"),
   sliderTitle: document.getElementById("sliderTitle"),
   sliderSubtitle: document.getElementById("sliderSubtitle"),
+  storyPanel: document.querySelector(".story-panel"),
+  memorySlider: document.querySelector(".memory-slider"),
   toast: document.getElementById("toast"),
   shareButton: document.getElementById("shareButton")
 };
+
+function restartAnimations(nodes) {
+  nodes.filter(Boolean).forEach(node => {
+    node.style.animation = "none";
+    void node.offsetWidth;
+    node.style.animation = "";
+  });
+}
 
 function showToast(message) {
   elements.toast.textContent = message;
@@ -146,7 +157,11 @@ function buildScenes() {
   const layouts = viewportWidth <= 560 ? phoneLayouts : viewportWidth <= 780 ? mobileLayouts : desktopLayouts;
 
   elements.memoryStage.innerHTML = state.data.memories.map((memory, memoryIndex) => `
-    <section class="memory-scene ${memoryIndex === state.activeIndex ? "active" : ""}" data-memory-index="${memoryIndex}" style="${viewportWidth <= 560 ? `--scene-height:${Math.max(760, 240 + memory.cards.slice(0, 6).length * 148)}px` : ""}">
+    <section
+      class="memory-scene ${memoryIndex === state.activeIndex ? "active" : ""}"
+      data-memory-index="${memoryIndex}"
+      style="--scene-shift:${memoryIndex < state.activeIndex ? -1 : 1};${viewportWidth <= 560 ? `--scene-height:${Math.max(760, 240 + memory.cards.slice(0, 6).length * 148)}px;` : ""}"
+    >
       ${memory.cards.slice(0, 6).map((card, cardIndex) => createCardMarkup(card, memoryIndex, cardIndex, layouts[cardIndex % layouts.length])).join("")}
     </section>
   `).join("");
@@ -162,7 +177,7 @@ function renderFilmstrip() {
       : `<div class="placeholder film-placeholder" style="--placeholder-gradient:${placeholderGradients[index % placeholderGradients.length]}"><strong>${cover.type === "video" ? "Thêm video" : "Thêm ảnh"}</strong></div>`;
 
     return `
-      <button class="filmstrip-btn" type="button" data-index="${index}" aria-current="${index === state.activeIndex}">
+      <button class="filmstrip-btn" type="button" data-index="${index}" aria-current="${index === state.activeIndex}" style="--thumb-index:${index}">
         <div class="film-frame">
           <div class="film-thumb">${thumb}</div>
         </div>
@@ -188,6 +203,10 @@ function renderStoryPanel() {
   elements.storyDescription.textContent = active.description;
   elements.memoryNumber.textContent = String(state.activeIndex + 1).padStart(2, "0");
   elements.memoryTitleMeta.textContent = active.title;
+  restartAnimations([
+    ...elements.storyPanel.children,
+    elements.memorySlider
+  ]);
 }
 
 function focusActiveThumbnail() {
@@ -215,9 +234,18 @@ function goToRelativeMemory(direction) {
 }
 
 function setActiveMemory(index) {
+  const total = state.data.memories.length;
+  const direction = index === state.activeIndex
+    ? 0
+    : ((index - state.activeIndex + total) % total <= total / 2 ? 1 : -1);
+
+  state.previousIndex = state.activeIndex;
   state.activeIndex = index;
+  elements.memoryStage.style.setProperty("--nav-direction", String(direction || 1));
+  elements.memoryStage.dataset.direction = direction >= 0 ? "forward" : "backward";
 
   document.querySelectorAll(".memory-scene").forEach((scene, sceneIndex) => {
+    scene.style.setProperty("--scene-shift", sceneIndex < index ? "-1" : "1");
     scene.classList.toggle("active", sceneIndex === index);
   });
 

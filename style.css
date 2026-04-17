@@ -115,6 +115,7 @@ body::after {
   overflow: hidden;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.14));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), var(--shadow);
+  perspective: 1600px;
 }
 
 .memory-stage::before {
@@ -131,14 +132,16 @@ body::after {
   inset: 28px;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(28px) scale(0.98);
-  transition: opacity 0.45s ease, transform 0.45s ease;
+  transform: translate3d(calc(var(--scene-shift, 0) * 48px), 28px, 0) scale(0.98);
+  filter: blur(10px);
+  transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.55s ease;
 }
 
 .memory-scene.active {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0) scale(1);
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
 }
 
 .memory-card {
@@ -152,16 +155,21 @@ body::after {
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(250, 247, 243, 0.98));
   box-shadow: 0 24px 50px rgba(70, 55, 44, 0.17);
-  transform: rotate(var(--rotation)) translateY(24px);
+  transform: rotate(var(--rotation)) translate3d(0, 28px, 0) scale(0.92);
+  transform-origin: center center;
   opacity: 0;
-  animation: card-enter 0.45s ease forwards;
-  animation-delay: var(--delay);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  will-change: transform, opacity;
 }
 
 .memory-scene.active .memory-card:hover {
   transform: rotate(var(--rotation)) translateY(-8px);
   box-shadow: 0 32px 58px rgba(61, 48, 38, 0.22);
+}
+
+.memory-scene.active .memory-card {
+  animation: card-enter 0.72s cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+  animation-delay: var(--delay);
 }
 
 .card-media {
@@ -247,6 +255,7 @@ body::after {
   width: 220px;
   transform: rotate(calc(var(--rotation) * -0.75));
   pointer-events: none;
+  opacity: 0;
 }
 
 .caption-text {
@@ -276,11 +285,42 @@ body::after {
   animation-delay: calc(var(--delay) + 0.16s);
 }
 
+.memory-scene.active .caption-group {
+  animation: caption-enter 0.65s ease forwards;
+  animation-delay: calc(var(--delay) + 0.14s);
+}
+
 .story-panel {
   align-self: center;
   display: grid;
   gap: 18px;
   padding: 18px 6px 18px 8px;
+}
+
+.story-panel > * {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: panel-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.story-panel > :nth-child(1) {
+  animation-delay: 0.08s;
+}
+
+.story-panel > :nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.story-panel > :nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.story-panel > :nth-child(4) {
+  animation-delay: 0.32s;
+}
+
+.story-panel > :nth-child(5) {
+  animation-delay: 0.4s;
 }
 
 .story-kicker {
@@ -372,6 +412,7 @@ body::after {
   backdrop-filter: blur(10px);
   pointer-events: auto;
   border: none;
+  animation: slider-float-in 0.8s cubic-bezier(0.2, 0.9, 0.25, 1) both;
 }
 
 .memory-slider-head {
@@ -418,6 +459,8 @@ body::after {
   opacity: 0.34;
   flex: 0 0 auto;
   transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
+  animation: thumb-fade-in 0.55s ease both;
+  animation-delay: calc(var(--thumb-index, 0) * 0.04s);
 }
 
 .filmstrip-btn:hover,
@@ -431,6 +474,11 @@ body::after {
   width: 52px;
   height: 40px;
   box-shadow: 0 10px 18px rgba(52, 40, 32, 0.18);
+}
+
+.filmstrip-btn[aria-current="true"] .film-thumb img,
+.filmstrip-btn[aria-current="true"] .film-thumb video {
+  animation: active-thumb-breathe 3.8s ease-in-out infinite;
 }
 
 .filmstrip-btn[aria-current="true"] .film-label {
@@ -510,18 +558,92 @@ body::after {
 @keyframes card-enter {
   from {
     opacity: 0;
-    transform: rotate(calc(var(--rotation) - 4deg)) translateY(30px);
+    transform: rotate(calc(var(--rotation) - 6deg)) translate3d(0, 38px, 0) scale(0.88);
+  }
+
+  68% {
+    opacity: 1;
+    transform: rotate(calc(var(--rotation) + 1.5deg)) translate3d(0, -6px, 0) scale(1.02);
   }
 
   to {
     opacity: 1;
-    transform: rotate(var(--rotation)) translateY(0);
+    transform: rotate(var(--rotation)) translate3d(0, 0, 0) scale(1);
   }
 }
 
 @keyframes draw-arrow {
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+@keyframes caption-enter {
+  from {
+    opacity: 0;
+    transform: rotate(calc(var(--rotation) * -0.75)) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(calc(var(--rotation) * -0.75)) translateY(0);
+  }
+}
+
+@keyframes panel-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slider-float-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes thumb-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.88);
+  }
+
+  to {
+    opacity: 0.34;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes active-thumb-breathe {
+  0%,
+  100% {
+    transform: scale(1.02);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
 }
 

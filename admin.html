@@ -3,94 +3,190 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản trị Memory Lane</title>
+  <title>Hướng Dẫn Cập Nhật Website</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-  <div class="overlay" id="loginOverlay">
-    <div class="login-card" id="loginCard">
-      <h2>Trang quản trị</h2>
-      <p>Nhập mật khẩu để mở bảng điều khiển và cập nhật website kỷ niệm.</p>
-      <form id="loginForm">
-        <div class="field">
-          <label for="passwordInput">Mật khẩu</label>
-          <input id="passwordInput" type="password" placeholder="Nhập mật khẩu" autocomplete="current-password">
-        </div>
-        <button class="btn btn-primary" type="submit">Mở trang quản trị</button>
-        <div class="error-text" id="loginError" aria-live="polite"></div>
-      </form>
-    </div>
-  </div>
-
-  <div class="shell" id="adminShell">
-    <header class="hero">
-      <div>
-        <h1>Bảng điều khiển kỷ niệm</h1>
-        <p>Điền nội dung, kéo thả ảnh hoặc video, rồi bấm lưu để website công khai cập nhật ngay trên GitHub Pages.</p>
-      </div>
-      <div class="hero-badge">Ngôn ngữ: Tiếng Việt</div>
+  <div class="admin-page">
+    <header class="admin-topbar">
+      <a class="admin-brand" href="./index.html">Memory Lane</a>
+      <a class="back-link" href="./index.html">Xem website</a>
     </header>
 
-    <section class="card">
-      <h2 class="section-title">Cài đặt website</h2>
-      <p class="section-desc">Thông tin này sẽ hiện ở phần đầu trang chính.</p>
-      <div class="settings-grid">
-        <div class="field">
-          <label for="siteTitle">Tên website</label>
-          <input id="siteTitle" type="text" value="Những Năm Tháng Cấp 3">
+    <main class="admin-layout">
+      <section class="admin-hero">
+        <div class="hero-note">Trang hướng dẫn cho người mới</div>
+        <h1>Chỉ cần sửa <span>data.js</span> và upload file vào đúng thư mục.</h1>
+        <p>
+          Website này không còn dùng localStorage. Từ bây giờ mọi người mở link đều nhìn thấy cùng một nội dung,
+          vì ảnh, video và dữ liệu đều nằm trực tiếp trong repository GitHub.
+        </p>
+
+        <div class="quick-steps">
+          <div class="quick-card">
+            <strong>1. Upload file</strong>
+            <span>Ảnh vào <code>photos/</code>, video vào <code>videos/</code></span>
+          </div>
+          <div class="quick-card">
+            <strong>2. Mở data.js</strong>
+            <span>Sửa tiêu đề, mô tả, caption và tên file</span>
+          </div>
+          <div class="quick-card">
+            <strong>3. Commit changes</strong>
+            <span>GitHub Pages sẽ tự cập nhật sau ít phút</span>
+          </div>
         </div>
-        <div class="field">
-          <label for="schoolName">Tên trường</label>
-          <input id="schoolName" type="text" placeholder="Ví dụ: THPT Nguyễn Du">
+      </section>
+
+      <aside class="admin-side">
+        <div class="side-card">
+          <h2>File bạn sẽ sửa thường xuyên</h2>
+          <ul>
+            <li><code>data.js</code>: sửa toàn bộ nội dung</li>
+            <li><code>photos/</code>: thêm ảnh mới</li>
+            <li><code>videos/</code>: thêm video mới</li>
+          </ul>
         </div>
-        <div class="field">
-          <label for="schoolYears">Năm học</label>
-          <input id="schoolYears" type="text" placeholder="Ví dụ: 2019 – 2022">
+        <div class="side-card soft">
+          <h2>Quy tắc nhớ nhanh</h2>
+          <p>Tên file trong <code>data.js</code> phải giống chính xác tên file bạn upload lên repository.</p>
         </div>
-      </div>
-      <div class="section-action">
-        <button class="btn btn-primary" id="saveSettingsBtn" type="button">Lưu cài đặt</button>
-      </div>
-    </section>
+      </aside>
 
-    <section class="card">
-      <h2 class="section-title">Quản lý kỷ niệm</h2>
-      <p class="section-desc">Mỗi kỷ niệm là một cụm ảnh hoặc video. Bạn có thể thêm tối đa 6 ô media cho mỗi mục.</p>
-      <div class="memory-list" id="memoryList"></div>
-    </section>
+      <section class="guide-grid">
+        <article class="guide-card">
+          <div class="guide-order">01</div>
+          <h2>Cách upload ảnh vào <code>photos/</code></h2>
+          <ol>
+            <li>Mở repository trên GitHub.</li>
+            <li>Vào thư mục <code>photos</code>.</li>
+            <li>Bấm <strong>Add file</strong> rồi chọn <strong>Upload files</strong>.</li>
+            <li>Kéo ảnh vào hoặc chọn từ máy tính.</li>
+            <li>Bấm <strong>Commit changes</strong>.</li>
+          </ol>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-order">02</div>
+          <h2>Cách upload video vào <code>videos/</code></h2>
+          <ol>
+            <li>Vào thư mục <code>videos</code> trong repository.</li>
+            <li>Bấm <strong>Add file</strong> rồi chọn <strong>Upload files</strong>.</li>
+            <li>Chọn file <code>.mp4</code> từ máy tính.</li>
+            <li>Bấm <strong>Commit changes</strong> để lưu.</li>
+          </ol>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-order">03</div>
+          <h2>Cách mở và sửa <code>data.js</code></h2>
+          <p>Trong repository, mở file <code>data.js</code> rồi bấm biểu tượng cây bút để chỉnh sửa trực tiếp trên GitHub.</p>
+          <pre><code>const siteData = {
+  siteTitle: "Những Năm Tháng Cấp 3",
+  schoolName: "THPT ...",
+  years: "2021 - 2024",
+  memories: [
+    {
+      title: "Ngày khai giảng",
+      description: "Một vài dòng mô tả",
+      cards: [
+        {
+          type: "photo",
+          src: "photos/khai-giang.jpg",
+          caption: "Chúng mình ngày ấy"
+        }
+      ]
+    }
+  ]
+};</code></pre>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-order">04</div>
+          <h2>Đổi tiêu đề website, tên trường, năm học</h2>
+          <p>Bạn chỉ cần sửa 3 dòng đầu trong <code>data.js</code>:</p>
+          <pre><code>siteTitle: "Những Năm Tháng Cấp 3",
+schoolName: "THPT Nguyễn Du",
+years: "2021 - 2024",</code></pre>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-order">05</div>
+          <h2>Thêm một kỷ niệm mới</h2>
+          <p>Trong mảng <code>memories</code>, thêm một khối mới theo mẫu sau:</p>
+          <pre><code>{
+  title: "Ngày bế giảng",
+  description: "Một vài dòng mô tả cho kỷ niệm này",
+  cards: [
+    {
+      type: "photo",
+      src: "photos/be-giang-1.jpg",
+      caption: "Tấm ảnh mình thích nhất"
+    },
+    {
+      type: "video",
+      src: "videos/be-giang.mp4",
+      caption: "Khoảnh khắc đáng nhớ"
+    }
+  ]
+}</code></pre>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-order">06</div>
+          <h2>Thêm một ảnh mới vào một kỷ niệm đang có</h2>
+          <ol>
+            <li>Upload ảnh vào thư mục <code>photos/</code>.</li>
+            <li>Mở <code>data.js</code>.</li>
+            <li>Tìm đúng kỷ niệm bạn muốn sửa.</li>
+            <li>Thêm một object mới vào mảng <code>cards</code>.</li>
+          </ol>
+          <pre><code>{
+  type: "photo",
+  src: "photos/lop-12a1-anh-moi.jpg",
+  caption: "Một tấm ảnh mới"
+}</code></pre>
+        </article>
+
+        <article class="guide-card wide">
+          <div class="guide-order">07</div>
+          <h2>Ví dụ đầy đủ từ đầu đến cuối</h2>
+          <p>Ví dụ bạn muốn thêm ảnh mới tên <code>ao-trang-san-truong.jpg</code> vào kỷ niệm <strong>Ngày khai giảng</strong>:</p>
+          <ol>
+            <li>Upload file <code>ao-trang-san-truong.jpg</code> vào thư mục <code>photos/</code>.</li>
+            <li>Mở file <code>data.js</code>.</li>
+            <li>Tìm đến mục <code>title: "Ngày khai giảng"</code>.</li>
+            <li>Trong mảng <code>cards</code>, thêm đoạn này:</li>
+          </ol>
+          <pre><code>{
+  type: "photo",
+  src: "photos/ao-trang-san-truong.jpg",
+  caption: "Sân trường hôm ấy"
+}</code></pre>
+          <ol start="5">
+            <li>Kéo xuống cuối trang GitHub và nhập mô tả commit, ví dụ: <code>Thêm ảnh mới cho mục Ngày khai giảng</code>.</li>
+            <li>Bấm <strong>Commit changes</strong>.</li>
+            <li>Chờ 1-2 phút, sau đó mở lại website.</li>
+          </ol>
+        </article>
+
+        <article class="guide-card wide">
+          <div class="guide-order">08</div>
+          <h2>Checklist mỗi lần cập nhật</h2>
+          <ul class="check-list">
+            <li>Tên file trong <code>data.js</code> phải giống đúng tên file trong repo.</li>
+            <li>Ảnh phải nằm trong <code>photos/</code>.</li>
+            <li>Video phải nằm trong <code>videos/</code>.</li>
+            <li>Sau khi sửa nhớ bấm <strong>Commit changes</strong>.</li>
+            <li>Nếu website chưa đổi ngay, chờ thêm 1-2 phút để GitHub Pages cập nhật.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
   </div>
-
-  <div class="sticky-bar" id="stickyBar">
-    <div class="sticky-copy">
-      <strong>Lưu và cập nhật website</strong>
-      <span>Dữ liệu sẽ được lưu trong trình duyệt bằng localStorage.</span>
-    </div>
-    <div class="sticky-actions">
-      <button class="btn btn-primary" id="saveAllBtn" type="button">💾 Lưu &amp; Cập nhật Website</button>
-      <button class="btn btn-secondary" id="previewSiteBtn" type="button">👁 Xem Website</button>
-      <button class="btn btn-secondary" id="exportGuideBtn" type="button">📦 Xuất file ảnh/video</button>
-    </div>
-  </div>
-
-  <div class="overlay hidden" id="modalOverlay">
-    <div class="modal-card">
-      <h2>Hướng dẫn xuất file ảnh/video</h2>
-      <ol class="guide-list">
-        <li>Tải file ảnh/video xuống máy.</li>
-        <li>Upload vào thư mục <strong>/photos/</strong> hoặc <strong>/videos/</strong> trên GitHub.</li>
-        <li>Bấm <strong>Commit changes</strong>.</li>
-        <li>Website tự cập nhật sau 1-2 phút.</li>
-      </ol>
-      <div class="modal-actions">
-        <button class="btn btn-primary" id="closeModalBtn" type="button">Đã hiểu</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast">✅ Đã lưu! Website đã được cập nhật.</div>
 
   <script src="admin.js"></script>
 </body>

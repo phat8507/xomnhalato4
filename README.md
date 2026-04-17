@@ -1,118 +1,178 @@
-# Memory Lane - Website kỷ niệm cho GitHub Pages
+# Memory Lane cho GitHub Pages
 
-Đây là bộ website tĩnh gồm
+Website nay duoc thiet ke de de cap nhat ve sau:
 
-- `index.html`: trang chính để xem kỷ niệm
-- `admin.html`: trang quản trị để nhập nội dung, ảnh và video
-- `style.css`, `app.js`: giao diện và logic cho trang chính
-- `admin.css`, `admin.js`: giao diện và logic cho trang quản trị
+1. Upload anh vao thu muc `photos/`
+2. Upload video vao thu muc `videos/`
+3. Mo file `data.js`
+4. Sua noi dung, ten file, caption, mo ta
+5. Commit changes
+6. GitHub Pages tu cap nhat
 
-Toàn bộ dữ liệu được lưu trong `localStorage` với key:
+Website khong con dung `localStorage` cho noi dung chinh. Moi nguoi mo link deu se thay cung mot noi dung vi du lieu nam truc tiep trong repository.
 
-```text
-memoryLaneData
-```
+## Cac file dung de lam gi
 
-## Cách mở trang Admin
+- `index.html`: khung trang chinh
+- `style.css`: giao dien trang chinh
+- `app.js`: logic hien thi cho trang chinh
+- `data.js`: file ban se sua de doi noi dung website
+- `admin.html`: trang huong dan cho nguoi moi
+- `admin.css`: giao dien trang huong dan
+- `admin.js`: script nho cho trang huong dan
+- `photos/`: noi luu anh
+- `videos/`: noi luu video
 
-Sau khi deploy lên GitHub Pages, thêm `/admin.html` vào cuối URL.
+## File ban can sua khi muon cap nhat
 
-Ví dụ:
+### 1. Them anh moi
 
-```text
-https://username.github.io/repo/admin.html
-```
+- Upload anh vao `photos/`
+- Mo `data.js`
+- Them mot card moi vao dung ky niem
 
-## Cách đổi mật khẩu admin
-
-Mật khẩu mặc định hiện tại là:
-
-```text
-capba2024
-```
-
-Muốn đổi, mở file `admin.js` và tìm dòng:
+Vi du:
 
 ```js
-const ADMIN_PASSWORD = "capba2024";
+{
+  type: "photo",
+  src: "photos/ao-trang-san-truong.jpg",
+  caption: "San truong hom ay"
+}
 ```
 
-Sau đó đổi thành mật khẩu bạn muốn.
+### 2. Them video moi
 
-## Cách thêm kỷ niệm mới
+- Upload video vao `videos/`
+- Mo `data.js`
+- Them mot card moi voi `type: "video"`
 
-Hiện tại website có sẵn 5 khối kỷ niệm. Bạn vào `admin.html`, đăng nhập rồi:
+Vi du:
 
-1. Mở từng thẻ kỷ niệm.
-2. Nhập `Tên kỷ niệm`.
-3. Nhập `Mô tả kỷ niệm`.
-4. Thêm `Chú thích` cho từng ảnh/video.
-5. Nếu cần thêm media, bấm `Thêm ô media`.
+```js
+{
+  type: "video",
+  src: "videos/khai-giang.mp4",
+  caption: "Mot doan phim ngan"
+}
+```
 
-Mỗi kỷ niệm hỗ trợ tối đa 6 ô media.
+### 3. Them mot ky niem moi
 
-## Cách upload ảnh/video
+Mo `data.js`, tim mang `memories`, sau do them mot object moi:
 
-Mỗi ô media hỗ trợ các định dạng:
+```js
+{
+  title: "Ngay be giang",
+  description: "Mot vai dong mo ta cho ky niem nay",
+  cards: [
+    {
+      type: "photo",
+      src: "photos/be-giang-1.jpg",
+      caption: "Tam anh minh thich nhat"
+    }
+  ]
+}
+```
 
-- `jpg`
-- `png`
-- `webp`
-- `mp4`
+### 4. Doi tieu de website
 
-Bạn có thể:
+Mo `data.js` va sua dong:
 
-- kéo thả file vào khung
-- hoặc bấm vào khung để chọn file
+```js
+siteTitle: "Nhung Nam Thang Cap 3",
+```
 
-Sau khi chọn file:
+### 5. Doi ten truong va nam hoc
 
-- ảnh/video sẽ được chuyển sang base64
-- lưu vào `localStorage`
-- hiển thị preview ngay trong trang admin
-- trang chính sẽ đọc lại dữ liệu đó và hiển thị thật
+Mo `data.js` va sua 2 dong:
 
-## Cách lưu nội dung
+```js
+schoolName: "THPT Nguyen Du",
+years: "2021 - 2024",
+```
 
-Ở thanh dưới cùng của trang admin, bấm:
+## Cau truc cua data.js
+
+File `data.js` co dang:
+
+```js
+const siteData = {
+  siteTitle: "Nhung Nam Thang Cap 3",
+  schoolName: "THPT ...",
+  years: "2021 - 2024",
+  memories: [
+    {
+      title: "Ngay khai giang",
+      description: "Mot vai dong mo ta",
+      cards: [
+        {
+          type: "photo",
+          src: "photos/khai-giang.jpg",
+          caption: "Chung minh ngay ay"
+        },
+        {
+          type: "video",
+          src: "videos/khai-giang.mp4",
+          caption: "Mot doan phim ngan"
+        }
+      ]
+    }
+  ]
+};
+```
+
+## Vi du cu the: them anh moi tu dau den cuoi
+
+Vi du ban muon them anh moi ten `ao-trang-san-truong.jpg`:
+
+1. Mo repository tren GitHub
+2. Vao thu muc `photos/`
+3. Bam `Add file` -> `Upload files`
+4. Upload file `ao-trang-san-truong.jpg`
+5. Commit file anh
+6. Mo file `data.js`
+7. Tim ky niem ban muon them anh
+8. Them doan nay vao mang `cards`
+
+```js
+{
+  type: "photo",
+  src: "photos/ao-trang-san-truong.jpg",
+  caption: "San truong hom ay"
+}
+```
+
+9. Bam `Commit changes`
+10. Cho 1-2 phut roi mo lai website
+
+## Cach mo trang huong dan
+
+Sau khi deploy, mo:
 
 ```text
-💾 Lưu & Cập nhật Website
+https://[username].github.io/[repo]/admin.html
 ```
 
-Sau khi lưu xong sẽ hiện thông báo:
+## Cach bat GitHub Pages
 
-```text
-✅ Đã lưu! Website đã được cập nhật.
-```
+1. Tao repository moi tren GitHub
+2. Upload toan bo file du an len repo
+3. Vao `Settings`
+4. Chon `Pages`
+5. O `Source`, chon `Deploy from a branch`
+6. Chon nhanh `main`
+7. Chon thu muc `/ (root)`
+8. Bam `Save`
 
-## Cách bật GitHub Pages
+Sau khi bat xong:
 
-1. Tạo repository mới trên GitHub.
-2. Upload toàn bộ file dự án lên repository.
-3. Vào `Settings`.
-4. Chọn `Pages`.
-5. Trong phần `Build and deployment`:
-   - `Source`: chọn `Deploy from a branch`
-   - `Branch`: chọn `main` hoặc `master`
-   - thư mục: chọn `/ (root)`
-6. Bấm `Save`.
-7. Chờ khoảng 1-2 phút để GitHub Pages xuất bản website.
+- Trang chinh: `https://[username].github.io/[repo]/`
+- Trang huong dan: `https://[username].github.io/[repo]/admin.html`
 
-Sau khi bật xong, URL trang chính thường là:
+## Ghi chu quan trong
 
-```text
-https://username.github.io/repo/
-```
-
-Trang admin:
-
-```text
-https://username.github.io/repo/admin.html
-```
-
-## Ghi chú quan trọng
-
-- Dữ liệu `localStorage` được lưu theo từng trình duyệt.
-- Nếu bạn đổi máy hoặc đổi trình duyệt, dữ liệu đã nhập sẽ không tự đồng bộ.
-- Nếu muốn lưu media cố định trong repo, bạn có thể dùng thư mục `/photos/` và `/videos/`.
+- Ten file trong `data.js` phai giong chinh xac ten file ban upload
+- Anh nen dat trong `photos/`
+- Video nen dat trong `videos/`
+- Neu sua xong ma website chua doi ngay, hay doi 1-2 phut de GitHub Pages cap nhat
